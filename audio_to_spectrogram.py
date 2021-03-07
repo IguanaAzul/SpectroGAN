@@ -3,14 +3,15 @@ from matplotlib import pyplot as plt
 import matplotlib
 import librosa
 import librosa.display
-import IPython.display as ipd
-from argparse import ArgumentParser
 matplotlib.use('Agg')
+
+seconds_per_file = 20
+file_size = 512
 
 def generate_spectrogram(x, sr, save_name):
     X = librosa.stft(x)
     Xdb = librosa.amplitude_to_db(abs(X))
-    fig = plt.figure(figsize=(256, 256), dpi=32, frameon=False)
+    fig = plt.figure(figsize=(file_size, file_size), dpi=1, frameon=False)
     ax = fig.add_axes([0, 0, 1, 1], frameon=False)
     ax.axis('off')
     librosa.display.specshow(Xdb, sr=sr, cmap='gray')
@@ -24,16 +25,17 @@ audio_clips = os.listdir(audio_fpath)
 
 for clip in audio_clips:
     audio_length = librosa.get_duration(filename=audio_fpath + clip)
-    j=60
+    j=seconds_per_file
     while j < audio_length:
-        x, sr = librosa.load(audio_fpath + clip, offset=j-60, duration=60)
-        save_name = spectrograms_path + clip + str(j) + ".png"
+        x, sr = librosa.load(audio_fpath + clip, offset=j-seconds_per_file, duration=seconds_per_file)
+
+        save_name = spectrograms_path + clip.split(".", 1)[0] + "_" + str(j) + ".png"
         if not os.path.exists(save_name):
             generate_spectrogram(x, sr, save_name)
-        j += 60
+        j += seconds_per_file
         if j >= audio_length:
             j = audio_length
-            x, sr = librosa.load(audio_fpath + clip, offset=j-60, duration=60)
-            save_name = spectrograms_path + clip + str(j) + ".png"
+            x, sr = librosa.load(audio_fpath + clip, offset=j-seconds_per_file, duration=seconds_per_file)
+            save_name = spectrograms_path + clip.split(".", 1)[0] + "_" + str(j) + ".png"
             if not os.path.exists(save_name):
                 generate_spectrogram(x, sr, save_name)
