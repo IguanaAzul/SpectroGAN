@@ -44,7 +44,6 @@ device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
 
 
 def weights_init(m):
-    # custom weights initialization called on netG and netD
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
         nn.init.normal_(m.weight.data, 0.0, 0.02)
