@@ -22,20 +22,24 @@ def generate_spectrogram(x, sr, save_name):
 audio_fpath = "./audios/"
 spectrograms_path = "./spectrograms/"
 audio_clips = os.listdir(audio_fpath)
+folders = [spectrograms_path + clip.split(".", 1)[0] + "/" for clip in audio_clips]
 
-for clip in audio_clips:
+for folder in folders:
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+
+for clip, folder in zip(audio_clips, folders):
     audio_length = librosa.get_duration(filename=audio_fpath + clip)
     j=seconds_per_file
     while j < audio_length:
         x, sr = librosa.load(audio_fpath + clip, offset=j-seconds_per_file, duration=seconds_per_file)
-
-        save_name = spectrograms_path + clip.split(".", 1)[0] + "_" + str(j) + ".png"
+        save_name = folder + str(j) + ".png"
         if not os.path.exists(save_name):
             generate_spectrogram(x, sr, save_name)
         j += seconds_per_file
         if j >= audio_length:
             j = audio_length
             x, sr = librosa.load(audio_fpath + clip, offset=j-seconds_per_file, duration=seconds_per_file)
-            save_name = spectrograms_path + clip.split(".", 1)[0] + "_" + str(j) + ".png"
+            save_name = folder + str(j) + ".png"
             if not os.path.exists(save_name):
                 generate_spectrogram(x, sr, save_name)
