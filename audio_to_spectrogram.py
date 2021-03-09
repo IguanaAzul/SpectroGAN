@@ -6,7 +6,7 @@ import librosa.display
 matplotlib.use('Agg')
 
 seconds_per_file = 20
-file_size = 512
+file_size = 256
 
 def generate_spectrogram(x, sr, save_name):
     X = librosa.stft(x)
