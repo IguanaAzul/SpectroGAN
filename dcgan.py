@@ -80,6 +80,8 @@ class Generator(nn.Module):
 # K is the Kernel size
 # P is the padding
 # S is the stride
+
+
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
