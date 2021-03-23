@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from IPython.display import HTML
+import gc
 
 seed = 1
 print("Random Seed: ", seed)
@@ -16,14 +17,14 @@ random.seed(seed)
 torch.manual_seed(seed)
 images_folder_path = "./spectrograms/"
 
-batch_size = 1
+batch_size = 32
 image_size = 256
 n_channels = 1
 z_vector = 100
-n_features_generator = 32
-n_features_discriminator = 32
-num_epochs = 100
-lr = 0.0002
+n_features_generator = 64
+n_features_discriminator = 64
+num_epochs = 150
+lr = 0.0001
 beta1 = 0.5
 
 dataset = torch_dataset.ImageFolder(
@@ -150,6 +151,9 @@ for epoch in range(num_epochs):
         errD_real.backward()
         D_x = output.mean().item()
 
+        torch.cuda.empty_cache()
+        gc.collect()
+
         noise = torch.randn(b_size, z_vector, 1, 1, device=device)
         fake = netG(noise)
         label.fill_(fake_label)
@@ -160,6 +164,9 @@ for epoch in range(num_epochs):
         errD = errD_real + errD_fake
         optimizerD.step()
 
+        torch.cuda.empty_cache()
+        gc.collect()
+
         netG.zero_grad()
         label.fill_(real_label)
         output = netD(fake).view(-1)
@@ -167,6 +174,9 @@ for epoch in range(num_epochs):
         errG.backward()
         D_G_z2 = output.mean().item()
         optimizerG.step()
+
+        torch.cuda.empty_cache()
+        gc.collect()
 
         if i % 50 == 0:
             print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
