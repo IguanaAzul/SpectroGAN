@@ -22,7 +22,7 @@ n_channels = 1
 z_vector = 100
 n_features_generator = 32
 n_features_discriminator = 32
-num_epochs = 5
+num_epochs = 100
 lr = 0.0002
 beta1 = 0.5
 
@@ -56,7 +56,13 @@ class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
         self.main = nn.Sequential(
-            nn.ConvTranspose2d(z_vector, n_features_generator * 8, 4, 1, bias=False),
+            nn.ConvTranspose2d(z_vector, n_features_generator * 32, 4, 1, bias=False),
+            nn.BatchNorm2d(n_features_generator * 32),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(n_features_generator * 32, n_features_generator * 16, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(n_features_generator * 16),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(n_features_generator * 16, n_features_generator * 8, 4, 2, 1, bias=False),
             nn.BatchNorm2d(n_features_generator * 8),
             nn.ReLU(True),
             nn.ConvTranspose2d(n_features_generator * 8, n_features_generator * 4, 4, 2, 1, bias=False),
@@ -75,33 +81,29 @@ class Generator(nn.Module):
     def forward(self, inputs):
         return self.main(inputs)
 
-# Convolutional Layer Output Shape = [(W−K+2P)/S]+1
-# W is the input volume
-# K is the Kernel size
-# P is the padding
-# S is the stride
-
 
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
         self.main = nn.Sequential(
             nn.Conv2d(n_channels, n_features_discriminator, 4, 2, 1, bias=False),
-            # input_shape=[256x256], output_shape=[128x128]
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv2d(n_features_discriminator, n_features_discriminator * 2, 4, 2, 1, bias=False),
-            # input_shape=[128x128], output_shape=[64x64]
             nn.BatchNorm2d(n_features_discriminator * 2),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv2d(n_features_discriminator * 2, n_features_discriminator * 4, 4, 2, 1, bias=False),
-            # input_shape=[64x64], output_shape=[32x32]
             nn.BatchNorm2d(n_features_discriminator * 4),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv2d(n_features_discriminator * 4, n_features_discriminator * 8, 4, 2, 1, bias=False),
-            # input_shape=[32x32], output_shape=[16x16]
             nn.BatchNorm2d(n_features_discriminator * 8),
             nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(n_features_discriminator * 8, 1, 4, 1, 0, bias=False)
+            nn.Conv2d(n_features_discriminator * 8, n_features_discriminator * 16, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(n_features_discriminator * 16),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Conv2d(n_features_discriminator * 16, n_features_discriminator * 32, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(n_features_discriminator * 32),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Conv2d(n_features_discriminator * 32, 1, 4, 1, 0, bias=False)
         )
 
     def forward(self, inputs):
@@ -143,9 +145,6 @@ for epoch in range(num_epochs):
         b_size = real_cpu.size(0)
         label = torch.full((b_size,), real_label, dtype=torch.float, device=device)
         output = netD(real_cpu)
-        print(output.shape)
-        print(label.shape)
-        print(label)
         output = output.view(-1)
         errD_real = criterion(output, label)
         errD_real.backward()
