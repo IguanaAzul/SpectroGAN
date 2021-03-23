@@ -129,7 +129,9 @@ dmypy.json
 .pyre/
 
 ./spectrograms
+./from_spectrogram
 ./audios
+./músicas
 
 # JPEG
 *.jpg

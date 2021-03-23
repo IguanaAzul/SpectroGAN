@@ -17,14 +17,14 @@ random.seed(seed)
 torch.manual_seed(seed)
 images_folder_path = "./spectrograms/"
 
-batch_size = 32
+batch_size = 16
 image_size = 256
 n_channels = 1
-z_vector = 100
+z_vector = 256
 n_features_generator = 64
 n_features_discriminator = 64
-num_epochs = 150
-lr = 0.0001
+num_epochs = 100
+lr = 0.0002
 beta1 = 0.5
 
 dataset = torch_dataset.ImageFolder(
