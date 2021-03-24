@@ -1,5 +1,4 @@
 from matplotlib import pyplot as plt
-import matplotlib
 import librosa
 import librosa.display
 import os
