@@ -52,8 +52,6 @@ def save_model(
     with open(models_folder + "model_info.txt", "w") as f:
         info += "seconds_per_file: " + str(seconds_per_file)
         info += "image_size: " + str(image_size)
-        info += "audio_fpath: " + str(audio_fpath)
-        info += "spectrograms_path: " + str(spectrograms_path)
         info += "batch_size: " + str(batch_size)
         info += "n_channels: " + str(n_channels)
         info += "z_vector: " + str(z_vector)
