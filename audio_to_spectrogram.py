@@ -3,7 +3,6 @@ import matplotlib
 import librosa
 import librosa.display
 import os
-matplotlib.use('Agg')
 
 
 def generate_spectrogram(x, sr, save_name, file_size):

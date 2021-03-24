@@ -132,6 +132,7 @@ dmypy.json
 ./from_spectrogram
 ./audios
 ./músicas
+./models
 
 # JPEG
 *.jpg
@@ -200,3 +201,5 @@ dmypy.json
 # Audio files
 *.wav
 *.mp3
+
+/.idea
