@@ -8,10 +8,10 @@ audio_fpath = "./audios/"
 spectrograms_path = "./spectrograms/"
 batch_size = 16
 n_channels = 1
-z_vector = 256
-n_features_generator = 8
-n_features_discriminator = 8
-num_epochs = 10
+z_vector = 128
+n_features_generator = 32
+n_features_discriminator = 32
+num_epochs = 150
 lr = 0.0002
 beta1 = 0.5
 
