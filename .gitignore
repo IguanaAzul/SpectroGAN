@@ -203,3 +203,5 @@ dmypy.json
 *.mp3
 
 /.idea
+/from_spectrogram/
+/models/
