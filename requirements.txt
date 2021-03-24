@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+seaborn
+Pillow
+ipython
+torch
+torchvision
+librosa

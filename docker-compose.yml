@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  spectrogan:
+    build: .
+    volumes:
+      - .:/code
+    command: "python main.py"
