@@ -205,3 +205,4 @@ dmypy.json
 /.idea
 /from_spectrogram/
 /models/
+/gan_output/
