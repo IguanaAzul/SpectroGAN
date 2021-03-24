@@ -37,9 +37,9 @@ def save_model(
         os.mkdir(models_folder)
 
     i = 0
-    while os.path.exists(models_folder + f"_{i}/"):
+    while os.path.exists(models_folder + f"model_{i}/"):
         i += 1
-    models_folder = models_folder + f"_{i}/"
+    models_folder = models_folder + f"model_{i}/"
     os.mkdir(models_folder)
 
     torch.save(generator, models_folder + "generator.pth")
@@ -50,17 +50,17 @@ def save_model(
 
     info = ""
     with open(models_folder + "model_info.txt", "w") as f:
-        info += "seconds_per_file: " + str(seconds_per_file)
-        info += "image_size: " + str(image_size)
-        info += "batch_size: " + str(batch_size)
-        info += "n_channels: " + str(n_channels)
-        info += "z_vector: " + str(z_vector)
-        info += "n_features_generator: " + str(n_features_generator)
-        info += "n_features_discriminator: " + str(n_features_discriminator)
-        info += "num_epochs: " + str(num_epochs)
-        info += "lr: " + str(lr)
-        info += "beta1: " + str(beta1)
-        info += "epoch: " + str(epoch)
+        info += f"seconds_per_file: {seconds_per_file}\n"
+        info += f"image_size: {image_size}\n"
+        info += f"batch_size: {batch_size}\n"
+        info += f"n_channels: {n_channels}\n"
+        info += f"z_vector: {z_vector}\n"
+        info += f"n_features_generator: {n_features_generator}\n"
+        info += f"n_features_discriminator: {n_features_discriminator}\n"
+        info += f"num_epochs: {num_epochs}\n"
+        info += f"lr: {lr}\n"
+        info += f"beta1: {beta1}\n"
+        info += f"epoch: {epoch}\n"
         f.write(info)
 
 
@@ -157,7 +157,7 @@ def train_gan(
         num_epochs,
         beta1,
         lr,
-        save_every_epoch=False,
+        save_every_epoch=False,     # Se passar esse parâmetro os dois de baixo também devem ser passados
         seconds_per_file=None,
         models_folder=None,
 ):
