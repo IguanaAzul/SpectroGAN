@@ -92,7 +92,10 @@ class Generator(nn.Module):
     def __init__(self, z_vector, n_features_generator, n_channels):
         super(Generator, self).__init__()
         self.main = nn.Sequential(
-            nn.ConvTranspose2d(z_vector, n_features_generator * 32, 4, 1, bias=False),
+            nn.ConvTranspose2d(z_vector, n_features_generator * 64, 4, 1, bias=False),
+            nn.BatchNorm2d(n_features_generator * 64),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(n_features_generator * 64, n_features_generator * 32, 4, 2, 1, bias=False),
             nn.BatchNorm2d(n_features_generator * 32),
             nn.ReLU(True),
             nn.ConvTranspose2d(n_features_generator * 32, n_features_generator * 16, 4, 2, 1, bias=False),
@@ -139,7 +142,10 @@ class Discriminator(nn.Module):
             nn.Conv2d(n_features_discriminator * 16, n_features_discriminator * 32, 4, 2, 1, bias=False),
             nn.BatchNorm2d(n_features_discriminator * 32),
             nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(n_features_discriminator * 32, 1, 4, 1, 0, bias=False)
+            nn.Conv2d(n_features_discriminator * 32, n_features_discriminator * 64, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(n_features_discriminator * 64),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Conv2d(n_features_discriminator * 64, 1, 4, 1, 0, bias=False)
         )
 
     def forward(self, inputs):

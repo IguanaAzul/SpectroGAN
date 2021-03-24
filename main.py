@@ -4,15 +4,15 @@ import time
 
 # Seta as variáveis
 seconds_per_file = 20
-image_size = 256
+image_size = 512
 audio_fpath = "./audios/"
 spectrograms_path = "./spectrograms/"
 models_folder = "./models/"
-batch_size = 16
+batch_size = 8
 n_channels = 1
-z_vector = 256
-n_features_generator = 64
-n_features_discriminator = 64
+z_vector = 128
+n_features_generator = 32
+n_features_discriminator = 32
 num_epochs = 100
 lr = 0.0002
 beta1 = 0.5
