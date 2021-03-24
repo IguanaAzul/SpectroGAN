@@ -17,27 +17,53 @@ random.seed(seed)
 torch.manual_seed(seed)
 
 
-def load_model(load_path, model, z_vector, n_features_generator, n_features_discriminator, n_channels):
-    load_path = load_path + f"/model_{model}/"
-    generator = Generator(z_vector, n_features_generator, n_channels).to(device)
-    discriminator = Discriminator(n_features_discriminator, n_channels).to(device)
-    generator.load_state_dict(torch.load(load_path+"generator"))
-    discriminator.load_state_dict(torch.load(load_path + "discriminator"))
-    return generator, discriminator
+def save_model(
+        models_folder,
+        generator,
+        discriminator,
+        seconds_per_file,
+        image_size,
+        batch_size,
+        n_channels,
+        z_vector,
+        n_features_generator,
+        n_features_discriminator,
+        num_epochs,
+        lr,
+        beta1,
+        epoch="Last"
+):
+    if not os.path.exists(models_folder):
+        os.mkdir(models_folder)
 
-
-def save_model(save_path, generator, discriminator):
-    if not os.path.exists(save_path):
-        os.mkdir(save_path)
     i = 0
-    while os.path.exists(save_path + f"/model_{i}/"):
+    while os.path.exists(models_folder + f"_{i}/"):
         i += 1
-    save_path = save_path + f"/model_{i}/"
-    os.mkdir(save_path)
-    torch.save(generator, save_path+"generator.pth")
-    torch.save(discriminator, save_path + "discriminator.pth")
-    torch.save(generator.state_dict(), save_path + "generator_state_dict.pth")
-    torch.save(discriminator.state_dict(), save_path + "discriminator_state_dict.pth")
+    models_folder = models_folder + f"_{i}/"
+    os.mkdir(models_folder)
+
+    torch.save(generator, models_folder + "generator.pth")
+    torch.save(discriminator, models_folder + "discriminator.pth")
+
+    torch.save(generator.state_dict(), models_folder + "generator_state_dict.pth")
+    torch.save(discriminator.state_dict(), models_folder + "discriminator_state_dict.pth")
+
+    info = ""
+    with open(models_folder + "model_info.txt", "w") as f:
+        info += "seconds_per_file: " + str(seconds_per_file)
+        info += "image_size: " + str(image_size)
+        info += "audio_fpath: " + str(audio_fpath)
+        info += "spectrograms_path: " + str(spectrograms_path)
+        info += "batch_size: " + str(batch_size)
+        info += "n_channels: " + str(n_channels)
+        info += "z_vector: " + str(z_vector)
+        info += "n_features_generator: " + str(n_features_generator)
+        info += "n_features_discriminator: " + str(n_features_discriminator)
+        info += "num_epochs: " + str(num_epochs)
+        info += "lr: " + str(lr)
+        info += "beta1: " + str(beta1)
+        info += "epoch: " + str(epoch)
+        f.write(info)
 
 
 def load_dataset(images_folder_path, image_size, batch_size):
@@ -133,32 +159,23 @@ def train_gan(
         num_epochs,
         beta1,
         lr,
-        load_params=None,
-        save_path="./models/",
         save_every_epoch=False,
+        seconds_per_file=None,
+        models_folder=None,
 ):
     dataloader = load_dataset(images_folder_path, image_size, batch_size)
-    if load_params:
-        generator_net, discriminator_net = load_model(
-            load_params["load_path"],
-            load_params["model"],
-            z_vector,
-            n_features_generator,
-            n_features_discriminator,
-            n_channels
-        )
-    else:
-        generator_net = Generator(z_vector, n_features_generator, n_channels).to(device)
-        if device.type == 'cuda':
-            generator_net = nn.DataParallel(generator_net)
-        generator_net.apply(weights_init)
-        print(generator_net)
 
-        discriminator_net = Discriminator(n_features_discriminator, n_channels).to(device)
-        if device.type == 'cuda':
-            discriminator_net = nn.DataParallel(discriminator_net)
-        discriminator_net.apply(weights_init)
-        print(discriminator_net)
+    generator_net = Generator(z_vector, n_features_generator, n_channels).to(device)
+    if device.type == 'cuda':
+        generator_net = nn.DataParallel(generator_net)
+    generator_net.apply(weights_init)
+    print(generator_net)
+
+    discriminator_net = Discriminator(n_features_discriminator, n_channels).to(device)
+    if device.type == 'cuda':
+        discriminator_net = nn.DataParallel(discriminator_net)
+    discriminator_net.apply(weights_init)
+    print(discriminator_net)
 
     criterion = nn.BCEWithLogitsLoss()
 
@@ -229,9 +246,23 @@ def train_gan(
                 img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
 
             iters += 1
-
         if save_every_epoch:
-            save_model(save_path, generator_net, discriminator_net)
+            save_model(
+                models_folder,
+                generator_net,
+                discriminator_net,
+                seconds_per_file,
+                image_size,
+                batch_size,
+                n_channels,
+                z_vector,
+                n_features_generator,
+                n_features_discriminator,
+                num_epochs,
+                lr,
+                beta1,
+                str(epoch)
+            )
 
     plt.figure(figsize=(10, 5))
     plt.title("Generator and Discriminator Loss During Training")
@@ -264,4 +295,4 @@ def train_gan(
     plt.imshow(np.transpose(img_list[-1], (1, 2, 0)))
     plt.show()
 
-    save_model(save_path, generator_net, discriminator_net)
+    return generator_net, discriminator_net

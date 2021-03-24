@@ -16,6 +16,13 @@ def generate_spectrogram(x, sr, save_name, file_size):
     librosa.cache.clear()
 
 
+def load_and_generate(audio_fpath, clip, seconds_per_file, folder, j, replace, file_size):
+    x, sr = librosa.load(audio_fpath + clip, offset=j - seconds_per_file, duration=seconds_per_file)
+    save_name = folder + str(j) + ".png"
+    if not os.path.exists(save_name) or replace:
+        generate_spectrogram(x, sr, save_name, file_size)
+
+
 def generate_all_spectrograms(
         audio_fpath="./audios/",
         spectrograms_path="./spectrograms/",
@@ -34,14 +41,8 @@ def generate_all_spectrograms(
         audio_length = librosa.get_duration(filename=audio_fpath + clip)
         j = seconds_per_file
         while j < audio_length:
-            x, sr = librosa.load(audio_fpath + clip, offset=j - seconds_per_file, duration=seconds_per_file)
-            save_name = folder + str(j) + ".png"
-            if not os.path.exists(save_name) or replace:
-                generate_spectrogram(x, sr, save_name, file_size)
+            load_and_generate(audio_fpath, clip, seconds_per_file, folder, j, replace, file_size)
             j += seconds_per_file
             if j >= audio_length:
                 j = audio_length
-                x, sr = librosa.load(audio_fpath + clip, offset=j - seconds_per_file, duration=seconds_per_file)
-                save_name = folder + str(j) + ".png"
-                if not os.path.exists(save_name) or replace:
-                    generate_spectrogram(x, sr, save_name, file_size)
+                load_and_generate(audio_fpath, clip, seconds_per_file, folder, j, replace, file_size)
