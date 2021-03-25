@@ -166,20 +166,27 @@ def train_gan(
         save_every_epoch=False,     # Se passar esse parâmetro os dois de baixo também devem ser passados
         seconds_per_file=None,
         models_folder=None,
+        generator=None,
+        discriminator=None,
 ):
     dataloader = load_dataset(images_folder_path, image_size, batch_size)
+    if generator is None:
+        generator_net = Generator(z_vector, n_features_generator, n_channels).to(device)
+        if device.type == 'cuda':
+            generator_net = nn.DataParallel(generator_net)
+        generator_net.apply(weights_init)
+        print(generator_net)
+    else:
+        generator_net = generator
 
-    generator_net = Generator(z_vector, n_features_generator, n_channels).to(device)
-    if device.type == 'cuda':
-        generator_net = nn.DataParallel(generator_net)
-    generator_net.apply(weights_init)
-    print(generator_net)
-
-    discriminator_net = Discriminator(n_features_discriminator, n_channels).to(device)
-    if device.type == 'cuda':
-        discriminator_net = nn.DataParallel(discriminator_net)
-    discriminator_net.apply(weights_init)
-    print(discriminator_net)
+    if discriminator is None:
+        discriminator_net = Discriminator(n_features_discriminator, n_channels).to(device)
+        if device.type == 'cuda':
+            discriminator_net = nn.DataParallel(discriminator_net)
+        discriminator_net.apply(weights_init)
+        print(discriminator_net)
+    else:
+        discriminator_net = discriminator
 
     criterion = nn.BCEWithLogitsLoss()
 

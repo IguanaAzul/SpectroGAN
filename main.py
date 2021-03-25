@@ -1,6 +1,8 @@
 from audio_to_spectrogram import generate_all_spectrograms
 from dcgan import train_gan, save_model
 import time
+import torch
+device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
 
 # Seta as variáveis
 seconds_per_file = 20
@@ -13,7 +15,7 @@ n_channels = 1
 z_vector = 128
 n_features_generator = 32
 n_features_discriminator = 32
-num_epochs = 100
+num_epochs = 50
 lr = 0.0002
 beta1 = 0.5
 
@@ -25,9 +27,11 @@ print(f"Tempo para gerar os espectrogramas: {time.time() - t0}")
 print("Treinando DCGAN")
 t0 = time.time()
 generator, discriminator = train_gan(
-    spectrograms_path, image_size, batch_size,
-    n_features_discriminator, n_features_generator,
-    z_vector, n_channels, num_epochs, beta1, lr,
+        spectrograms_path, image_size, batch_size,
+        n_features_discriminator, n_features_generator,
+        z_vector, n_channels, num_epochs, beta1, lr,
+        save_every_epoch=True, seconds_per_file=20,
+        models_folder="./models/model/"
 )
 print(f"Tempo para treinar o modelo: {time.time() - t0}")
 
