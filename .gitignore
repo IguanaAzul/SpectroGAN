@@ -134,6 +134,7 @@ dmypy.json
 ./músicas
 ./models
 ./spectrograms*
+./test*
 
 # JPEG
 *.jpg

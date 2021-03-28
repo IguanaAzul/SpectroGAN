@@ -5,7 +5,6 @@ import librosa
 import librosa.display
 import soundfile
 import os
-matplotlib.use('Agg')
 
 
 def map_values(x, left_min, left_max, right_min, right_max):
