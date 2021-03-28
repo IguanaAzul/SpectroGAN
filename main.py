@@ -6,7 +6,7 @@ device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
 
 # Seta as variáveis
 seconds_per_file = 20
-image_size = 1024
+image_size = 512
 audio_fpath = "./audios/"
 spectrograms_path = "./spectrograms/"
 models_folder = "./models/"

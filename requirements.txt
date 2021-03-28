@@ -7,3 +7,4 @@ ipython
 torch
 torchvision
 librosa
+soundfile
