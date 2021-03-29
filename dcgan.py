@@ -190,8 +190,6 @@ def train_gan(
 
     criterion = nn.BCEWithLogitsLoss()
 
-    fixed_noise = torch.randn(64, z_vector, 1, 1, device=device)
-
     real_label = 1.
     fake_label = 0.
 
@@ -250,11 +248,6 @@ def train_gan(
 
             generator_losses.append(err_generator.item())
             discriminator_losses.append(err_discriminator.item())
-
-            if (iters % 500 == 0) or ((epoch == num_epochs-1) and (i == len(dataloader)-1)):
-                with torch.no_grad():
-                    fake = generator_net(fixed_noise).detach().cpu()
-                img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
 
             iters += 1
         if save_every_epoch:

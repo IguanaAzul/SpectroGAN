@@ -4,4 +4,4 @@ services:
     build: .
     volumes:
       - .:/code
-    command: "python main.py"
+    command: "python train_gan.py"
