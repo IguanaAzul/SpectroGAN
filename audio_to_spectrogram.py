@@ -1,5 +1,4 @@
 from matplotlib import pyplot as plt
-import matplotlib
 import numpy as np
 import librosa
 import librosa.display
@@ -47,6 +46,7 @@ def generate_spectrogram(read_path, write_path, img_size, offset, audio_duration
         plt.savefig(write_path, dpi=1, pil_kwargs={"quality": 100})
         plt.show()
         librosa.cache.clear()
+        plt.close()
 
 
 def retrieve_audio(read_path, write_path, sr=22050, repeats=4):
@@ -58,11 +58,12 @@ def retrieve_audio(read_path, write_path, sr=22050, repeats=4):
     soundfile.write(write_path, result, sr)
 
 
-def retrieve_audios_from_folder(read_path, write_path, sr=22050, repeats=4):
+def retrieve_audios_from_folder(read_path, write_path, sr=22050, repeats=4, replace=False):
     if not os.path.exists(write_path):
         os.mkdir(write_path)
     for file in os.listdir(read_path):
-        retrieve_audio(f"{read_path}/{file}", f"{write_path}/{file}.wav", sr, repeats)
+        if not os.path.exists(f"{write_path}/{file}.wav") or replace:
+            retrieve_audio(f"{read_path}/{file}", f"{write_path}/{file}.wav", sr, repeats)
 
 
 def generate_all_spectrograms(

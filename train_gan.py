@@ -6,16 +6,15 @@ device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
 # Seta as variáveis
 seconds_per_file = 20
 image_size = 512
-audio_fpath = "./audios/"
 spectrograms_path = "./spectrograms/"
-models_folder = "./models/"
-batch_size = 16
+models_folder = "./models/model4_more_songs/"
+batch_size = 8
 n_channels = 1
-z_vector = 256
-n_features_generator = 64
-n_features_discriminator = 128
-num_epochs = 100
-lr = 0.0002
+z_vector = 128
+n_features_generator = 32
+n_features_discriminator = 64
+num_epochs = 10000
+lr = 0.0001
 beta1 = 0.5
 
 print("Treinando DCGAN")
@@ -25,7 +24,7 @@ generator, discriminator = train_gan(
         n_features_discriminator, n_features_generator,
         z_vector, n_channels, num_epochs, beta1, lr,
         save_every_epoch=True, seconds_per_file=seconds_per_file,
-        models_folder="./models/model/"
+        models_folder=models_folder,
 )
 print(f"Tempo para treinar o modelo: {time.time() - t0}")
 
