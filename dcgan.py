@@ -4,11 +4,6 @@ import torch.optim as optim
 import torch.utils.data
 import torchvision.datasets as torch_dataset
 import torchvision.transforms as transforms
-import torchvision.utils as vutils
-import numpy as np
-import matplotlib.animation as animation
-from IPython.display import HTML
-import matplotlib.pyplot as plt
 import gc
 import os
 device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
