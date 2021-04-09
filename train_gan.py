@@ -7,7 +7,7 @@ device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
 seconds_per_file = 20
 image_size = 512
 spectrograms_path = "./spectrograms/"
-models_folder = "./models/model4_more_songs/"
+models_folder = "./models/model3/"
 batch_size = 8
 n_channels = 1
 z_vector = 128
@@ -17,8 +17,9 @@ num_epochs = 10000
 lr = 0.0001
 beta1 = 0.5
 
-generator = torch.load("./models/model4_more_songs/model_42/generator.pth")
-discriminator = torch.load("./models/model4_more_songs/model_42/discriminator.pth")
+# Caso queira continuar o treinamento de onde parou:
+# generator = torch.load("./models/model3/model_42/generator.pth")
+# discriminator = torch.load("./models/model3/model_42/discriminator.pth")
 
 print("Treinando DCGAN")
 t0 = time.time()
@@ -27,8 +28,10 @@ generator, discriminator = train_gan(
         n_features_discriminator, n_features_generator,
         z_vector, n_channels, num_epochs, beta1, lr,
         save_every_epoch=True, seconds_per_file=seconds_per_file,
-        models_folder=models_folder, generator=generator, discriminator=discriminator
+        models_folder=models_folder
+        # Caso queira continuar o treinamento de onde parou: , generator=generator, discriminator=discriminator
 )
+
 print(f"Tempo para treinar o modelo: {time.time() - t0}")
 
 save_model(

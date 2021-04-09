@@ -1,4 +1,4 @@
-from audio_to_spectrogram import generate_all_spectrograms
+from spectrogram_conversion import generate_all_spectrograms
 import matplotlib
 import time
 matplotlib.use("Agg")
